@@ -1,11 +1,10 @@
-"use strict";
-
 import React from 'react';
 import {
   Animated,
   PanResponder,
   TouchableOpacity,
   Image,
+  ViewPropTypes,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -232,30 +231,15 @@ class AnimatedSprite extends React.Component {
 
   getStyle () {
     const opacity = !this.props.visible ? new Animated.Value(0) : this.state.opacity;
-    const rotateAxes = _.map(this.state.rotate, axis => axis);
-    const transform = _.concat([{scale: this.state.scale}], rotateAxes);
-    return (
-      // TODO: this.props.visible part of hack to what may be a
-      // RN bug associated with premiture stopping of Tween and removing
-      // The related component
-      {
-        opacity,
-        transform,
-        top: this.state.top,
-        left: this.state.left,
-        width: this.state.width,
-        height: this.state.height,
-        position: 'absolute',
-      }
-
-    );
+    return {
+      opacity,
+    };
   }
 
   render () {
     return (
       <Animated.View
-        {...this.panResponder.panHandlers}
-        style={this.getStyle()}
+        style={[this.getStyle(), this.props.style]}
         ref={(sprite) => {
           this.spriteComponentRef = sprite;
         }}>
@@ -288,7 +272,6 @@ AnimatedSprite.propTypes = {
     height: PropTypes.number,
   }).isRequired,
   animationFrameIndex: PropTypes.array.isRequired,
-
   rotate: PropTypes.arrayOf(PropTypes.object),
   opacity: PropTypes.number,
   spriteUID: PropTypes.string,
@@ -309,6 +292,7 @@ AnimatedSprite.propTypes = {
   onAnimationFinish: PropTypes.func,
   visible: PropTypes.bool,
   fps: PropTypes.number,
+  style: ViewPropTypes.style,
 };
 
 AnimatedSprite.defaultProps = {
@@ -318,7 +302,7 @@ AnimatedSprite.defaultProps = {
   opacity: 1,
   fps: 10,
   visible: true,
+  style: null,
 };
 
 export default AnimatedSprite;
-
