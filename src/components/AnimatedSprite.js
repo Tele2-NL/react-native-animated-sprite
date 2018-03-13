@@ -27,9 +27,10 @@ class AnimatedSprite extends React.Component {
       width: props.size.width,
       height: props.size.height,
       rotate: props.rotate,
-      frameIndex: this.props.animationFrameIndex,
+      frameIndex: this.props.animationFrameIndex[0],
     };
 
+    this.shouldAnimate = this.props.shouldAnimate;
     this.sprite = this.props.sprite;
     this.frameIndex = 0;
     this.defaultAnimationInterval = undefined;
@@ -54,7 +55,9 @@ class AnimatedSprite extends React.Component {
   }
 
   componentDidMount () {
-    this.startAnimation();
+    if(this.shouldAnimate) {
+      this.startAnimation();
+    }
     // part of PanResponder and drag behavior
     if (this.spriteComponentRef) {
       this.spriteComponentRef.setNativeProps(this.spriteStyles);
@@ -65,8 +68,20 @@ class AnimatedSprite extends React.Component {
     this.fps = this.props.fps || this.fps;
   }
 
+  componentWillReceiveProps(nextProps) {
+    const isAnimationTurnedOn = !this.props.shouldAnimate && nextProps.shouldAnimate
+    this.shouldAnimate = isAnimationTurnedOn;
+  }
+
   shouldComponentUpdate (nextProps, nextState) {
      return shallowCompare(this, nextProps, nextState);
+  }
+
+  componentDidUpdate() {
+    if(this.shouldAnimate) {
+      this.startAnimation();
+      this.shouldAnimate = false;
+    }
   }
 
   componentWillUnmount () {
@@ -271,6 +286,7 @@ AnimatedSprite.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
   }).isRequired,
+  shouldAnimate: PropTypes.bool,
   animationFrameIndex: PropTypes.array.isRequired,
   rotate: PropTypes.arrayOf(PropTypes.object),
   opacity: PropTypes.number,
@@ -296,6 +312,7 @@ AnimatedSprite.propTypes = {
 };
 
 AnimatedSprite.defaultProps = {
+  shouldAnimate: false,
   draggable: false,
   spriteUID: randomstring({ length: 7 }),
   rotate: [{rotateY: '0deg'}],
