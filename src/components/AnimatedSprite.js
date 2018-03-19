@@ -80,7 +80,6 @@ class AnimatedSprite extends React.Component {
   componentDidUpdate() {
     if(this.shouldAnimate) {
       this.startAnimation();
-      this.shouldAnimate = false;
     }
   }
 
@@ -150,6 +149,7 @@ class AnimatedSprite extends React.Component {
   }
   
   startAnimation () {
+    this.shouldAnimate = false;
     this.fps = this.props.fps || this.fps;
     this.frameIndex = -1;
     clearInterval(this.defaultAnimationInterval);
