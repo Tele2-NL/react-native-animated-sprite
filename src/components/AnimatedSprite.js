@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ViewPropTypes,
+  StyleSheet,
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -268,13 +269,36 @@ class AnimatedSprite extends React.Component {
             style={{
               width: this.state.width,
               height: this.state.height,
+              zIndex: 10,
             }}
           />
+          {this.sprite.frames[this.state.frameIndex + 1] &&
+            <Image
+              source={this.sprite.frames[this.state.frameIndex + 1]}
+              style={[
+                styles.nextImageToRender,
+                {
+                  width: this.state.width,
+                  height: this.state.height,
+                },
+              ]}
+            />
+          }
         </TouchableOpacity>
       </Animated.View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  nextImageToRender: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 1,
+    opacity: 0,
+  },
+});
 
 AnimatedSprite.propTypes = {
   sprite: PropTypes.object.isRequired,
